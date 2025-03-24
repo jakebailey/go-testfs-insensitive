@@ -12,14 +12,25 @@ func TestFS(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to get current working directory: %v", err)
 	}
+	dir = filepath.Join(dir, "testdata")
 
-	fs := os.DirFS(filepath.Join(dir, "testdata"))
+	const testFile = "foo/bar/file.txt"
+	const testFileUpper = "FOO/BAR/FILE.TXT"
 
-	if err := fstest.TestFS(fs, "foo/bar/file.txt"); err != nil {
+	caseInsensitive := false
+	if _, err := os.Stat(filepath.Join(dir, testFileUpper)); err == nil {
+		caseInsensitive = true
+	}
+
+	fs := os.DirFS(dir)
+
+	if err := fstest.TestFS(fs, testFile); err != nil {
 		t.Fatalf("failed to test file system: %v", err)
 	}
 
-	if err := fstest.TestFS(fs, "FOO/bar/file.txt"); err != nil {
-		t.Fatalf("failed to test file system case insensitively: %v", err)
+	if caseInsensitive {
+		if err := fstest.TestFS(fs, testFileUpper); err != nil {
+			t.Fatalf("failed to test file system case insensitively: %v", err)
+		}
 	}
 }
