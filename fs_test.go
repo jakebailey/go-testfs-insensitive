@@ -32,5 +32,7 @@ func TestFS(t *testing.T) {
 		if err := fstest.TestFS(fs, testFileUpper); err != nil {
 			t.Fatalf("failed to test file system case insensitively: %v", err)
 		}
+	} else {
+		t.Logf("File system is case sensitive, skipping case insensitive test")
 	}
 }
